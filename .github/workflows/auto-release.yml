@@ -1,0 +1,20 @@
+name: On Label added
+
+on:
+  pull_request_target:
+    types: [labeled]
+    branches:
+      - master
+
+jobs:
+  on_pr_opened:
+    if: contains(github.event.pull_request.labels.*.name, 'test')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approve PR and add publish label
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr review ${{ github.event.number }} --approve --body "Approved by automation"
+          gh pr edit ${{ github.event.number }} --add-label "publish"
